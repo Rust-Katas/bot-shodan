@@ -1,0 +1,13 @@
+[package]
+name = "bot-shodan"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#matrix-sdk = { path = "../matrix-rust-sdk/crates/matrix-sdk" }
+matrix-sdk = { git = "https://github.com/matrix-org/matrix-rust-sdk.git" }
+tokio = { version = "1.7.1", features = ["full", "fs", "rt"] }
+url = "2.2.2"
+tracing-subscriber = "0.3.7"
