@@ -24,8 +24,23 @@ async fn on_room_message(event: SyncRoomMessageEvent, room: Room) {
         } = event
         {
             let member = room.get_member(&sender).await.unwrap().unwrap();
-            let name = member.display_name().unwrap_or_else(|| member.user_id().as_str());
+            let name = member
+                .display_name()
+                .unwrap_or_else(|| member.user_id().as_str());
             println!("{}: {}", name, msg_body);
+
+            if msg_body.contains("!party") {
+                let content = RoomMessageEventContent::text_plain("🎉🎊🥳 let's PARTY!! 🥳🎊🎉");
+
+                println!("sending");
+
+                // send our message to the room we found the "!party" command in
+                // the last parameter is an optional transaction id which we don't
+                // care about.
+                room.send(content, None).await.unwrap();
+
+                println!("message sent");
+            }
         }
     }
 }
@@ -40,7 +55,9 @@ async fn login(
 
     client.register_event_handler(on_room_message).await;
 
-    client.login(username, password, None, Some("rust-sdk")).await?;
+    client
+        .login(username, password, None, Some("rust-sdk"))
+        .await?;
     client.sync(SyncSettings::new()).await;
 
     Ok(())
