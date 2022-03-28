@@ -5,7 +5,7 @@ use matrix_sdk::{
     config::SyncSettings,
     room::Room,
     ruma::events::room::message::{
-        MessageType, RoomMessageEventContent, SyncRoomMessageEvent, TextMessageEventContent,
+        MessageType, RoomMessageEventContent, SyncRoomMessageEvent, TextMessageEventContent, FormattedBody,
     },
     Client,
 };
@@ -13,10 +13,17 @@ use url::Url;
 
 async fn on_room_message(event: SyncRoomMessageEvent, room: Room) {
     if let Room::Joined(room) = room {
+        println!("YEEEEEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAAA");
+        println!("-----------------Event is {:#?}", event);
         if let SyncRoomMessageEvent {
             content:
                 RoomMessageEventContent {
-                    msgtype: MessageType::Text(TextMessageEventContent { body: msg_body, .. }),
+                    msgtype: MessageType::Text(TextMessageEventContent { 
+                        body: msg_body, 
+                        formatted: 
+                            Some(FormattedBody {body: formatted_body, ..} )
+                        , ..
+                        }),
                     ..
                 },
             sender,
@@ -27,9 +34,8 @@ async fn on_room_message(event: SyncRoomMessageEvent, room: Room) {
             let name = member
                 .display_name()
                 .unwrap_or_else(|| member.user_id().as_str());
-            println!("{}: {}", name, msg_body);
 
-            if msg_body.contains("!party") {
+            if msg_body.contains("!party") && formatted_body.contains("@bot-shodan:ionescu.net") {
                 let content = RoomMessageEventContent::text_plain("🎉🎊🥳 let's PARTY!! 🥳🎊🎉");
 
                 println!("sending");
